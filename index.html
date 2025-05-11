@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Book App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .app-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .recipe-list {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
+    }
+    .recipe-item {
+      display: flex;
+      justify-content: space-between;
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+    }
+    .recipe-item button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .recipe-item button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <h1>Recipe Book</h1>
+
+    <input type="text" id="recipe-name" placeholder="Recipe Name">
+    <input type="text" id="recipe-ingredients" placeholder="Ingredients (comma separated)">
+    <textarea id="recipe-instructions" rows="4" placeholder="Instructions"></textarea>
+    <button id="add-recipe-btn">Add Recipe</button>
+
+    <ul class="recipe-list" id="recipe-list">
+      <!-- List of recipes will appear here -->
+    </ul>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const recipeNameInput = document.getElementById('recipe-name');
+    const recipeIngredientsInput = document.getElementById('recipe-ingredients');
+    const recipeInstructionsInput = document.getElementById('recipe-instructions');
+    const addRecipeBtn = document.getElementById('add-recipe-btn');
+    const recipeList = document.getElementById('recipe-list');
+
+    // Load saved recipes from localStorage
+    const loadRecipes = () => {
+      const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+      recipeList.innerHTML = '';
+      recipes.forEach((recipe, index) => {
+        const recipeItem = document.createElement('li');
+        recipeItem.classList.add('recipe-item');
+        recipeItem.innerHTML = `
+          <div>
+            <strong>${recipe.name}</strong><br>
+            <em>${recipe.ingredients}</em><br>
+            <p>${recipe.instructions}</p>
+          </div>
+          <button onclick="deleteRecipe(${index})">Delete</button>
+        `;
+        recipeList.appendChild(recipeItem);
+      });
+    };
+
+    // Save recipes to localStorage
+    const saveRecipes = (recipes) => {
+      localStorage.setItem('recipes', JSON.stringify(recipes));
+    };
+
+    // Add a new recipe
+    addRecipeBtn.addEventListener('click', () => {
+      const name = recipeNameInput.value.trim();
+      const ingredients = recipeIngredientsInput.value.trim();
+      const instructions = recipeInstructionsInput.value.trim();
+
+      if (name && ingredients && instructions) {
+        const newRecipe = {
+          name,
+          ingredients,
+          instructions,
+        };
+
+        // Get existing recipes from localStorage
+        const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+        recipes.push(newRecipe);
+
+        // Save updated recipes back to localStorage
+        saveRecipes(recipes);
+
+        // Clear inputs
+        recipeNameInput.value = '';
+        recipeIngredientsInput.value = '';
+        recipeInstructionsInput.value = '';
+
+        // Reload the recipe list
+        loadRecipes();
+      } else {
+        alert('Please fill out all fields');
+      }
+    });
+
+    // Delete a recipe
+    const deleteRecipe = (index) => {
+      const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+      recipes.splice(index, 1);
+      saveRecipes(recipes);
+      loadRecipes();
+    };
+
+    // Initial load of recipes
+    loadRecipes();
+  </script>
+
+</body>
+</html>
