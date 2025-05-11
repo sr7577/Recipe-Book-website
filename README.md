@@ -1,4 +1,5 @@
 Recipe Book App
+
 This is a simple Recipe Book App where users can add, view, and delete recipes. The app allows you to store recipe information, including the recipe name, ingredients, and instructions. All data is stored locally using localStorage, which ensures your recipes persist even after refreshing the page.
 
 Features
